@@ -1,0 +1,42 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Sample data (Replace with your actual data source)
+data = {
+    'Project_ID': [1, 2, 3, 4, 5],
+    'Initial_Investment': [10000, 15000, 12000, 18000, 20000],
+    'Cash_Flows': [
+        [3000, 3000, 3000, 3000, 3000],
+        [4000, 4000, 4000, 4000, 4000],
+        [3500, 3500, 3500, 3500, 3500],
+        [4500, 4500, 4500, 4500, 4500],
+        [5000, 5000, 5000, 5000, 5000],
+    ],
+}
+
+# Creating a DataFrame
+df = pd.DataFrame(data)
+
+# Calculate Net Present Value (NPV) for each project
+discount_rate = 0.1  # Replace with the actual discount rate
+df['NPV'] = df['Cash_Flows'].apply(lambda cf: sum(cf[i] / (1 + discount_rate) ** i for i in range(len(cf))) - df['Initial_Investment'])
+
+# Calculate Internal Rate of Return (IRR) for each project
+df['IRR'] = df['Cash_Flows'].apply(lambda cf: round((sum(cf) - df['Initial_Investment']) / df['Initial_Investment'], 4) * 100)
+
+# Data Visualization - Bar plot for NPV and IRR comparison
+fig, ax1 = plt.subplots()
+
+ax1.bar(df['Project_ID'], df['NPV'], color='tab:blue')
+ax1.set_xlabel('Project ID')
+ax1.set_ylabel('Net Present Value (NPV)', color='tab:blue')
+ax1.tick_params(axis='y', labelcolor='tab:blue')
+
+ax2 = ax1.twinx()
+ax2.plot(df['Project_ID'], df['IRR'], color='tab:red', marker='o')
+ax2.set_ylabel('Internal Rate of Return (IRR) (%)', color='tab:red')
+ax2.tick_params(axis='y', labelcolor='tab:red')
+
+plt.title('ROI Analysis for Digital Workspace Implementations')
+plt.xticks(df['Project_ID'])
+plt.show()
